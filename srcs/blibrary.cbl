@@ -1,0 +1,18 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. blibrary.
+       AUTHOR. ThomasD & Leocrabe225.
+       DATE-WRITTEN. 03-06-2025 (fr).
+       DATE-COMPILED. null.
+       
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+
+       DATA DIVISION.
+       FILE SECTION.
+
+       WORKING-STORAGE SECTION.
+
+       PROCEDURE DIVISION.
+
+           STOP RUN.
