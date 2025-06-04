@@ -24,10 +24,11 @@
        01  LK-AUTHOR-FIRSTNAME  PIC X(25).
        
 
-       PROCEDURE DIVISION. 
+       PROCEDURE DIVISION USING LK-AUTHOR-ID,
+                                LK-AUTHOR-LASTNAME,
+                                LK-AUTHOR-FIRSTNAME. 
        
-       DISPLAY "Enter author's id: ".
-       ACCEPT WS-AUTHOR-ID.
+       MOVE LK-AUTHOR-ID TO WS-AUTHOR-ID.
        
        EXEC SQL 
           SELECT last_name, first_name 
@@ -49,9 +50,9 @@
           EXEC SQL 
            ROLLBACK 
           END-EXEC 
+
        END-IF.
 
-       MOVE WS-AUTHOR-ID TO LK-AUTHOR-ID.
        MOVE WS-AUTHOR-LASTNAME TO LK-AUTHOR-LASTNAME.
        MOVE WS-AUTHOR-FIRSTNAME TO LK-AUTHOR-FIRSTNAME.
 

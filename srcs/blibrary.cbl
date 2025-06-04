@@ -55,7 +55,7 @@
                    WHEN WS-BOOKS-STRING
                        PERFORM NO-OP
                    WHEN WS-AUTHORS-STRING
-                       PERFORM NO-OP
+                       CALL "menuauth"
                    WHEN WS-EDITORS-STRING
                        PERFORM NO-OP
                    WHEN WS-STATS-STRING

@@ -24,24 +24,41 @@
        01  LK-AUTHOR-FIRSTNAME  PIC X(25).
 
 
-       PROCEDURE DIVISION.
-
-       DISPLAY "Enter author's id: ".
-       ACCEPT WS-AUTHOR-ID.
-
-       DISPLAY "Enter author's lastname : ".
-       ACCEPT WS-AUTHOR-LASTNAME.
-       DISPLAY "Enter author's firstname  : ".
-       ACCEPT WS-AUTHOR-FIRSTNAME.
+       PROCEDURE DIVISION USING LK-AUTHOR-ID,
+                                LK-AUTHOR-LASTNAME,
+                                LK-AUTHOR-FIRSTNAME.
+       
+       MOVE LK-AUTHOR-ID TO WS-AUTHOR-ID.
+       MOVE LK-AUTHOR-LASTNAME TO WS-AUTHOR-LASTNAME.
+       MOVE LK-AUTHOR-FIRSTNAME TO WS-AUTHOR-FIRSTNAME.
 
 
        EXEC SQL 
-          UPDATE authors
-          SET last_name = :WS-AUTHOR-LASTNAME, 
-          first_name = :WS-AUTHOR-FIRSTNAME
-          
+          SELECT id
+          INTO :WS-AUTHOR-ID
+          FROM authors
           WHERE id = :WS-AUTHOR-ID
        END-EXEC.
+       
+
+       EVALUATE SQLCODE 
+           
+           WHEN +100
+               DISPLAY "There is no author to update in the database."
+           
+           WHEN 0
+             
+               EXEC SQL 
+               UPDATE authors
+               SET last_name = :WS-AUTHOR-LASTNAME, 
+               first_name = :WS-AUTHOR-FIRSTNAME
+               
+               WHERE id = :WS-AUTHOR-ID
+               END-EXEC
+               EXEC SQL COMMIT END-EXEC
+               
+       END-EVALUATE.
+
 
        IF SQLCODE = 0
           DISPLAY "Update successful."
@@ -54,6 +71,7 @@
           EXEC SQL 
            ROLLBACK 
           END-EXEC 
+
        END-IF.
 
        MOVE WS-AUTHOR-ID TO LK-AUTHOR-ID.
