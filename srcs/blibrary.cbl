@@ -97,4 +97,4 @@
        END-EXEC.
        9900-DISCONNECT-SQL-END.
 
-       NO-OP..
+       NO-OP.
