@@ -57,7 +57,7 @@
                    WHEN WS-AUTHORS-STRING
                        PERFORM NO-OP
                    WHEN WS-EDITORS-STRING
-                       PERFORM NO-OP
+                       CALL "menuedit"
                    WHEN WS-STATS-STRING
                        PERFORM NO-OP
                    WHEN WS-FILE-STRING

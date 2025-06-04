@@ -17,36 +17,39 @@
 
        LINKAGE SECTION.
        01 LK-NAME             PIC X(25).
+       COPY retstatu REPLACING ==:PREFIX:== BY ==LK==.
 
-       PROCEDURE DIVISION USING LK-NAME.
+       PROCEDURE DIVISION USING LK-NAME
+                                LK-RETURN-VALUE.
 
-           PERFORM 0100-CHECK-IF-ALREADY-HERE-BEGIN
-              THRU 0100-CHECK-IF-ALREADY-HERE-END.
+           PERFORM 0100-EXIT-IF-ALREADY-HERE-BEGIN
+              THRU 0100-EXIT-IF-ALREADY-HERE-END.
 
            PERFORM 0200-INSERT-BEGIN
               THRU 0200-INSERT-END.
 
            EXIT PROGRAM.
 
-       0100-CHECK-IF-ALREADY-HERE-BEGIN.
-           MOVE LK-NAME TO WS-NAME.
-       EXEC SQL
-           SELECT
-               id
-           INTO
-               :WS-ID
-           FROM
-               editors
-           WHERE
-               name = :WS-NAME;
-       END-EXEC.
-       0100-CHECK-IF-ALREADY-HERE-END.
+       0100-EXIT-IF-ALREADY-HERE-BEGIN.
+           CALL "readedit" USING
+               LK-NAME
+               WS-ID
+               LK-RETURN-VALUE
+           END-CALL.
+           
+           IF NOT LK-RETURN-NOT-FOUND THEN
+                EXIT PROGRAM
+           END-IF.
+       0100-EXIT-IF-ALREADY-HERE-END.
 
        0200-INSERT-BEGIN.
+           MOVE LK-NAME TO WS-NAME.
        EXEC SQL
            INSERT INTO editors 
                (name)
            VALUES
                (:WS-NAME);
        END-EXEC.
+
+       EXEC SQL COMMIT END-EXEC.
        0200-INSERT-END.
