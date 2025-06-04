@@ -25,8 +25,8 @@
            PERFORM 0100-EXIT-IF-ALREADY-HERE-BEGIN
               THRU 0100-EXIT-IF-ALREADY-HERE-END.
 
-           PERFORM 0200-INSERT-BEGIN
-              THRU 0200-INSERT-END.
+           PERFORM 0200-CREATE-BEGIN
+              THRU 0200-CREATE-END.
 
            EXIT PROGRAM.
 
@@ -42,7 +42,7 @@
            END-IF.
        0100-EXIT-IF-ALREADY-HERE-END.
 
-       0200-INSERT-BEGIN.
+       0200-CREATE-BEGIN.
            MOVE LK-NAME TO WS-NAME.
        EXEC SQL
            INSERT INTO editors 
@@ -51,5 +51,12 @@
                (:WS-NAME);
        END-EXEC.
 
-       EXEC SQL COMMIT END-EXEC.
-       0200-INSERT-END.
+           EVALUATE SQLCODE
+               WHEN 0
+                   SET LK-RETURN-OK TO TRUE
+       EXEC SQL COMMIT END-EXEC
+               WHEN OTHER
+                   SET LK-RETURN-ERROR TO TRUE
+       EXEC SQL ROLLBACK END-EXEC
+           END-EVALUATE.
+       0200-CREATE-END.

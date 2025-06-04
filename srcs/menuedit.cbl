@@ -15,6 +15,21 @@
        01 WS-USER-NAME-INPUT  PIC X(25).
        01 WS-ID               PIC 9(10).
 
+       01 WS-OUT-HDR.
+           05 WS-OUT-HDR-ID   PIC X(10) VALUE "id".
+           05 FILLER          PIC X(03) VALUE " | ".
+           05 WS-OUT-HDR-NAME PIC X(25) VALUE "name".
+
+       01 WS-OUT-SEPARATION-LINE.
+           05 FILLER          PIC X(10) VALUE ALL "-".
+           05 FILLER          PIC X(03) VALUE "-*-".
+           05 FILLER          PIC X(25) VALUE ALL "-".
+
+       01 WS-OUT-LINE.
+           05 WS-OUT-ID       PIC X(10).
+           05 FILLER          PIC X(03) VALUE " | ".
+           05 WS-OUT-NAME     PIC X(25).
+
        PROCEDURE DIVISION.
 
            PERFORM 0100-MENU-EDIT-BEGIN
@@ -61,6 +76,12 @@
                WS-USER-NAME-INPUT
                WS-RETURN-VALUE
            END-CALL.
+           EVALUATE TRUE
+               WHEN WS-RETURN-OK
+                   DISPLAY "Editor insert successful."
+               WHEN WS-RETURN-ERROR
+                   DISPLAY "Editor insert error."
+           END-EVALUATE.
        0300-CREATE-EDITOR-END.
 
        0400-READ-EDITOR-BEGIN.
@@ -73,7 +94,11 @@
            END-CALL.
            EVALUATE TRUE
                WHEN WS-RETURN-OK
-                   DISPLAY "The id is : " WS-ID
+                   DISPLAY WS-OUT-HDR
+                   DISPLAY WS-OUT-SEPARATION-LINE
+                   MOVE WS-ID TO WS-OUT-ID
+                   MOVE WS-USER-NAME-INPUT TO WS-OUT-NAME
+                   DISPLAY WS-OUT-LINE
                WHEN WS-RETURN-NOT-FOUND
                    DISPLAY "Record not found."
                WHEN WS-RETURN-ERROR
