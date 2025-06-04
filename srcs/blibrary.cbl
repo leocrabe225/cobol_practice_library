@@ -7,6 +7,8 @@
        DATA DIVISION.
 
        WORKING-STORAGE SECTION.
+       COPY sepline.
+
        01 WS-BOOKS-STRING      PIC X(10) VALUE "BOOKS".
        01 WS-BORROWINGS-STRING PIC X(10) VALUE "BORROWINGS".
        01 WS-PEOPLE-STRING     PIC X(10) VALUE "PEOPLE".
@@ -65,6 +67,9 @@
        0100-MAIN-MENU-END.
 
        0200-DISPLAY-MAIN-MENU-BEGIN.
+           DISPLAY WS-SEPARATION-LINE.
+           DISPLAY "Main menu"
+           DISPLAY WS-SEPARATION-LINE.
            DISPLAY "What do you want to do ?".
            DISPLAY FUNCTION TRIM(WS-BOOKS-STRING)
                    " - Interact directly with books".

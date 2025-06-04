@@ -20,7 +20,7 @@ all: $(BIN)
 
 # Link all .cob files into one executable
 $(BIN): $(PRECOMPILED)
-	cobc -x -locesql $(PRECOMPILED) -o $(BIN)
+	cobc -x -locesql $(PRECOMPILED) -o $(BIN) -I srcs/Copybooks
 
 # Rule to build .cob files from .cbl files via ocesql
 $(OBJECT_FOLDER)%.cob: $(SRC_FOLDER)%.cbl

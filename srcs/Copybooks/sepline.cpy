@@ -1,0 +1,1 @@
+       01 WS-SEPARATION-LINE  PIC X(80) VALUE ALL "-".
