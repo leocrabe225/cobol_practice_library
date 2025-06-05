@@ -47,7 +47,7 @@
                ACCEPT WS-USER-INPUT
                EVALUATE WS-USER-INPUT
                    WHEN WS-BOOKS-STRING
-                       PERFORM NO-OP
+                       CALL "menubook"
                    WHEN WS-BORROWINGS-STRING
                        PERFORM NO-OP
                    WHEN WS-PEOPLE-STRING
