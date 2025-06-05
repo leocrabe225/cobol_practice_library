@@ -51,7 +51,7 @@
                    WHEN WS-BORROWINGS-STRING
                        PERFORM NO-OP
                    WHEN WS-PEOPLE-STRING
-                       PERFORM NO-OP
+                       CALL "menupple"
                    WHEN WS-TYPES-STRING
                        CALL "menutype"
                    WHEN WS-AUTHORS-STRING
