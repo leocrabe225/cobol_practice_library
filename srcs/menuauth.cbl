@@ -30,7 +30,7 @@
                    WS-READ-STRING " / " 
                    WS-UPDATE-STRING " / "
                    WS-DELETE-STRING " / "
-                   WS-QUIT-STRING " / "
+                   WS-QUIT-STRING 
       
            ACCEPT WS-CRUD
            
