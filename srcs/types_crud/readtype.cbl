@@ -21,35 +21,37 @@
        LINKAGE SECTION. 
        01  LK-TYPE-ID         PIC 9(10).
        01  LK-TYPE-NAME       PIC X(20).
+       COPY retstatu REPLACING ==:PREFIX:== BY ==LK==.
        
 
-       PROCEDURE DIVISION USING LK-TYPE-ID,
-                                LK-TYPE-NAME.
+       PROCEDURE DIVISION USING LK-TYPE-NAME,
+                                LK-TYPE-ID,
+                                LK-RETURN-VALUE.
        
-       MOVE LK-TYPE-ID TO WS-TYPE-ID.
+       MOVE LK-TYPE-NAME TO WS-TYPE-NAME.
        
        EXEC SQL 
-          SELECT name 
-          INTO :WS-TYPE-NAME 
+          SELECT id 
+          INTO :WS-TYPE-ID 
           FROM types
-          WHERE id = :WS-TYPE-ID
+          WHERE name = :WS-TYPE-NAME
        END-EXEC.
               
 
-       IF SQLCODE = 0
-          DISPLAY "Reading successful."
-          DISPLAY "Book type : " WS-TYPE-NAME
-          
-       
-       ELSE
-          DISPLAY "Reading error SQLCODE: " SQLCODE
-          EXEC SQL 
-           ROLLBACK 
-          END-EXEC 
+       EVALUATE SQLCODE
+          WHEN 0
+              SET LK-RETURN-OK TO TRUE
+          WHEN +100
+              SET LK-RETURN-NOT-FOUND TO TRUE
+          WHEN OTHER
+              SET LK-RETURN-ERROR TO TRUE
+       EXEC SQL 
+          ROLLBACK 
+       END-EXEC 
 
-       END-IF.
+       END-EVALUATE.
 
-       MOVE WS-TYPE-NAME TO LK-TYPE-NAME.
+       MOVE WS-TYPE-ID TO LK-TYPE-ID.
 
 
        EXIT PROGRAM.
