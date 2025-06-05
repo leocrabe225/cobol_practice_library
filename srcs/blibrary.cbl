@@ -52,7 +52,7 @@
                        PERFORM NO-OP
                    WHEN WS-PEOPLE-STRING
                        PERFORM NO-OP
-                   WHEN WS-BOOKS-STRING
+                   WHEN WS-TYPES-STRING
                        PERFORM NO-OP
                    WHEN WS-AUTHORS-STRING
                        CALL "menuauth"
@@ -77,7 +77,7 @@
                    " - Interact directly with borrowings".
            DISPLAY FUNCTION TRIM(WS-PEOPLE-STRING)
                    " - Interact directly with borrowers".
-           DISPLAY FUNCTION TRIM(WS-BOOKS-STRING) 
+           DISPLAY FUNCTION TRIM(WS-TYPES-STRING) 
                   " - Interact directly with book genres".
            DISPLAY FUNCTION TRIM(WS-AUTHORS-STRING) 
                   " - Interact directly with authors".
