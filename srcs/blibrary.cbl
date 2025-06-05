@@ -55,7 +55,7 @@
                    WHEN WS-TYPES-STRING
                        PERFORM NO-OP
                    WHEN WS-AUTHORS-STRING
-                       PERFORM NO-OP
+                       CALL "menuauth"
                    WHEN WS-EDITORS-STRING
                        CALL "menuedit"
                    WHEN WS-STATS-STRING
