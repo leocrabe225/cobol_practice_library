@@ -15,56 +15,51 @@
 
        EXEC SQL END DECLARE SECTION END-EXEC.
 
+       01 WS-AUTHOR-ID          PIC 9(10).
+
        EXEC SQL INCLUDE SQLCA END-EXEC.
 
        LINKAGE SECTION. 
        01  LK-AUTHOR-LASTNAME   PIC X(25).
        01  LK-AUTHOR-FIRSTNAME  PIC X(25).
+       COPY retstatu REPLACING ==:PREFIX:== BY ==LK==.
+
         
 
-       PROCEDURE DIVISION USING LK-AUTHOR-LASTNAME, LK-AUTHOR-FIRSTNAME. 
+       PROCEDURE DIVISION USING LK-AUTHOR-LASTNAME,
+                                LK-AUTHOR-FIRSTNAME,
+                                LK-RETURN-VALUE. 
        
        MOVE LK-AUTHOR-LASTNAME TO WS-AUTHOR-LASTNAME.
        MOVE LK-AUTHOR-FIRSTNAME TO WS-AUTHOR-FIRSTNAME.
 
        
-       EXEC SQL 
-          SELECT last_name, first_name 
-          INTO :WS-AUTHOR-LASTNAME, :WS-AUTHOR-FIRSTNAME 
-          FROM authors
-          WHERE last_name = :WS-AUTHOR-LASTNAME 
-          AND first_name = :WS-AUTHOR-FIRSTNAME
-       END-EXEC.
-       
-       EVALUATE SQLCODE 
-           
-           WHEN +100
-              EXEC SQL
-              INSERT INTO authors (last_name, first_name)
-              VALUES (:WS-AUTHOR-LASTNAME, :WS-AUTHOR-FIRSTNAME)
-              END-EXEC
-              EXEC SQL COMMIT END-EXEC
-           
-           WHEN 0
-              DISPLAY "This author is already in the database."
+       CALL "readauth" USING 
+           WS-AUTHOR-LASTNAME
+           WS-AUTHOR-FIRSTNAME
+           WS-AUTHOR-ID
+           LK-RETURN-VALUE
+       END-CALL.
 
+       EVALUATE TRUE
+           WHEN LK-RETURN-OK
+               SET LK-RETURN-ALREADY-HERE TO TRUE
+               EXIT PROGRAM
+           WHEN LK-RETURN-ERROR
+               EXIT PROGRAM
        END-EVALUATE.
+       
+       EXEC SQL
+           INSERT INTO authors (last_name, first_name)
+           VALUES (:WS-AUTHOR-LASTNAME, :WS-AUTHOR-FIRSTNAME)
+       END-EXEC
 
-
-       IF SQLCODE = 0
-          DISPLAY "Insertion successful."
-
-       ELSE
-          DISPLAY "Insertion error SQLCODE: " SQLCODE
-          EXEC SQL 
-           ROLLBACK 
-          END-EXEC 
-
-       END-IF.
-
-
-       MOVE WS-AUTHOR-LASTNAME TO LK-AUTHOR-LASTNAME.
-       MOVE WS-AUTHOR-FIRSTNAME TO LK-AUTHOR-FIRSTNAME.
-
+       EVALUATE SQLCODE 
+           WHEN 0
+              SET LK-RETURN-OK TO TRUE
+              EXEC SQL COMMIT END-EXEC
+           WHEN OTHER
+              SET LK-RETURN-ERROR TO TRUE
+              EXEC SQL ROLLBACK END-EXEC
+       END-EVALUATE.
        EXIT PROGRAM.
-

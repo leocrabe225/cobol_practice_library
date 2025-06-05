@@ -22,39 +22,34 @@
        01  LK-AUTHOR-ID         PIC 9(10).
        01  LK-AUTHOR-LASTNAME   PIC X(25).
        01  LK-AUTHOR-FIRSTNAME  PIC X(25).
+       COPY retstatu REPLACING ==:PREFIX:== BY ==LK==.
        
 
-       PROCEDURE DIVISION USING LK-AUTHOR-ID,
-                                LK-AUTHOR-LASTNAME,
-                                LK-AUTHOR-FIRSTNAME. 
+       PROCEDURE DIVISION USING LK-AUTHOR-LASTNAME,
+                                LK-AUTHOR-FIRSTNAME,
+                                LK-AUTHOR-ID,
+                                LK-RETURN-VALUE. 
        
-       MOVE LK-AUTHOR-ID TO WS-AUTHOR-ID.
+       MOVE LK-AUTHOR-LASTNAME TO WS-AUTHOR-LASTNAME.
+       MOVE LK-AUTHOR-FIRSTNAME TO WS-AUTHOR-FIRSTNAME.
        
        EXEC SQL 
-          SELECT last_name, first_name 
-          INTO :WS-AUTHOR-LASTNAME, :WS-AUTHOR-FIRSTNAME 
+          SELECT id
+          INTO :WS-AUTHOR-ID
           FROM authors
-          WHERE id = :WS-AUTHOR-ID
+          WHERE last_name = :WS-AUTHOR-LASTNAME AND
+                first_name = :WS-AUTHOR-FIRSTNAME
        END-EXEC.
-              
 
-       IF SQLCODE = 0
-          DISPLAY "Reading successful."
-          DISPLAY "Lastname : " WS-AUTHOR-LASTNAME
-          SPACES WITH NO ADVANCING 
-                  "Firstname : " WS-AUTHOR-FIRSTNAME
-          
-       
-       ELSE
-          DISPLAY "Reading error SQLCODE: " SQLCODE
-          EXEC SQL 
-           ROLLBACK 
-          END-EXEC 
+       EVALUATE SQLCODE
+          WHEN 0
+              SET LK-RETURN-OK TO TRUE
+          WHEN +100
+              SET LK-RETURN-NOT-FOUND TO TRUE
+          WHEN OTHER
+              SET LK-RETURN-ERROR TO TRUE
+       END-EVALUATE.
 
-       END-IF.
-
-       MOVE WS-AUTHOR-LASTNAME TO LK-AUTHOR-LASTNAME.
-       MOVE WS-AUTHOR-FIRSTNAME TO LK-AUTHOR-FIRSTNAME.
-
+       MOVE WS-AUTHOR-ID TO LK-AUTHOR-ID.
 
        EXIT PROGRAM.
