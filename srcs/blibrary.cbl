@@ -61,7 +61,8 @@
                    WHEN WS-STATS-STRING
                        PERFORM NO-OP
                    WHEN WS-FILE-STRING
-                       PERFORM NO-OP
+                       PERFORM 0300-READFILE-BEGIN
+                          THRU 0300-READFILE-END
                END-EVALUATE
            END-PERFORM.
        0100-MAIN-MENU-END.
@@ -90,6 +91,14 @@
            DISPLAY FUNCTION TRIM(WS-QUIT-STRING) 
                   " - Quit program".
        0200-DISPLAY-MAIN-MENU-END.
+
+       0300-READFILE-BEGIN.
+           DISPLAY "What file do you want to insert into the database?".
+           ACCEPT WS-IN-FILE-NAME.
+           CALL 'readfile' USING
+               WS-IN-FILE-NAME
+           END-CALL.
+       0300-READFILE-END.
 
        9900-DISCONNECT-SQL-BEGIN.
        EXEC SQL
