@@ -53,7 +53,7 @@
                    WHEN WS-PEOPLE-STRING
                        PERFORM NO-OP
                    WHEN WS-TYPES-STRING
-                       PERFORM NO-OP
+                       CALL "menutype"
                    WHEN WS-AUTHORS-STRING
                        PERFORM NO-OP
                    WHEN WS-EDITORS-STRING
