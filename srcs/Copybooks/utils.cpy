@@ -1,0 +1,3 @@
+       COPY sepline.
+       COPY crudstr.
+       

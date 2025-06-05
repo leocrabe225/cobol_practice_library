@@ -2,9 +2,12 @@
 SRC_FOLDER = srcs/
 OBJECT_FOLDER = objects/
 
+MAIN_SRC = $(SRC_FOLDER)blibrary.cbl
 # Get all .cbl files from source directory
-SRC = $(wildcard $(SRC_FOLDER)*.cbl)
+ALL_SRC = $(shell find $(SRC_FOLDER) -type f -name '*.cbl')
+SRC = $(filter-out $(MAIN_SRC), $(ALL_SRC))
 
+MAIN_PRECOMPILED = $(patsubst $(SRC_FOLDER)%.cbl, $(OBJECT_FOLDER)%.cob, $(MAIN_SRC))
 # Compute precompiled .cob files in objects/ (e.g., srcs/foo.cbl -> objects/foo.cob)
 PRECOMPILED = $(patsubst $(SRC_FOLDER)%.cbl, $(OBJECT_FOLDER)%.cob, $(SRC))
 
@@ -19,12 +22,12 @@ all: $(BIN)
 	./$(BIN)
 
 # Link all .cob files into one executable
-$(BIN): $(PRECOMPILED)
-	cobc -x -locesql $(PRECOMPILED) -o $(BIN)
+$(BIN): $(MAIN_PRECOMPILED) $(PRECOMPILED)
+	cobc -x -locesql $(MAIN_PRECOMPILED) $(PRECOMPILED) -o $(BIN) -I srcs/Copybooks
 
 # Rule to build .cob files from .cbl files via ocesql
 $(OBJECT_FOLDER)%.cob: $(SRC_FOLDER)%.cbl
-	@mkdir -p $(OBJECT_FOLDER)
+	@mkdir -p $(dir $@)
 	ocesql $< $@
 
 # Build all shared libraries from .cob
@@ -36,4 +39,4 @@ $(OBJECT_FOLDER)%.so: $(OBJECT_FOLDER)%.cob
 
 # Clean all generated files
 clean:
-	rm -f $(OBJECT_FOLDER)*.cob $(OBJECT_FOLDER)*.so $(BIN)
+	rm -rf $(OBJECT_FOLDER) $(BIN)
