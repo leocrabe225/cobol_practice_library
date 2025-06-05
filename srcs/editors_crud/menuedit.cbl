@@ -180,3 +180,4 @@
                    DISPLAY "Read/Delete error."
            END-EVALUATE.
        0600-DELETE-EDITOR-END.
+       
