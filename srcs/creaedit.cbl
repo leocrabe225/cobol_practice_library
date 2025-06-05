@@ -38,7 +38,8 @@
            END-CALL.
            
            IF NOT LK-RETURN-NOT-FOUND THEN
-                EXIT PROGRAM
+               SET LK-RETURN-ALREADY-HERE TO TRUE
+               EXIT PROGRAM
            END-IF.
        0100-EXIT-IF-ALREADY-HERE-END.
 
