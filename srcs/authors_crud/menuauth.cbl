@@ -18,6 +18,9 @@
 
        01 WS-CRUD   PIC X(10).
 
+       COPY retstatu REPLACING ==:PREFIX:== BY ==WS==.
+
+
        PROCEDURE DIVISION.
        
 
@@ -45,18 +48,44 @@
                    CALL "creaauth" USING 
                         WS-AUTHOR-LASTNAME
                         WS-AUTHOR-FIRSTNAME
+                        WS-RETURN-VALUE
                    END-CALL
+
+                   EVALUATE TRUE
+                       WHEN WS-RETURN-OK
+                           DISPLAY "Authors insert successful"
+                       WHEN WS-RETURN-ALREADY-HERE
+                           DISPLAY "Author already exists"
+                       WHEN WS-RETURN-ERROR
+                           DISPLAY "Author read/insert error"
+                   END-EVALUATE
       
                WHEN WS-READ-STRING
-                   DISPLAY "Enter author's id: "
-                   ACCEPT WS-AUTHOR-ID
+                   DISPLAY "Enter author's last name: "
+                   ACCEPT WS-AUTHOR-LASTNAME
+                   DISPLAY "Enter author's first name: "
+                   ACCEPT WS-AUTHOR-FIRSTNAME
 
                    CALL "readauth" USING 
-                        WS-AUTHOR-ID
                         WS-AUTHOR-LASTNAME
                         WS-AUTHOR-FIRSTNAME
+                        WS-AUTHOR-ID
+                        WS-RETURN-VALUE
                    END-CALL 
 
+                   EVALUATE TRUE
+                       WHEN WS-RETURN-OK
+                           DISPLAY "id : " WS-AUTHOR-ID
+                                   " | "
+                                   "Last name : " WS-AUTHOR-LASTNAME
+                                   " | "
+                                   "First name : " WS-AUTHOR-FIRSTNAME
+                           DISPLAY "Reading successful"
+                       WHEN WS-RETURN-NOT-FOUND
+                           DISPLAY "Record not found"
+                       WHEN WS-RETURN-ERROR
+                           DISPLAY "Authors read error"
+                   END-EVALUATE
                WHEN WS-UPDATE-STRING
                    DISPLAY "Enter author's id: "
                    ACCEPT WS-AUTHOR-ID

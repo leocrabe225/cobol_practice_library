@@ -14,50 +14,48 @@
 
        EXEC SQL END DECLARE SECTION END-EXEC.
 
+       01  WS-TYPE-ID     PIC 9(10).
+
        EXEC SQL INCLUDE SQLCA END-EXEC.
 
        LINKAGE SECTION. 
        01  LK-TYPE-NAME   PIC X(20).
-        
+       
+       COPY retstatu REPLACING ==:PREFIX:== BY ==LK==.
 
-       PROCEDURE DIVISION USING LK-TYPE-NAME. 
+       PROCEDURE DIVISION USING LK-TYPE-NAME,
+                                LK-RETURN-VALUE. 
        
        MOVE LK-TYPE-NAME TO WS-TYPE-NAME.
 
        
-       EXEC SQL 
-          SELECT name 
-          INTO :WS-TYPE-NAME,  
-          FROM types
-          WHERE name = :WS-TYPE-NAME 
-       END-EXEC.
-       
-       EVALUATE SQLCODE 
-           
-           WHEN +100
-              EXEC SQL
-              INSERT INTO types (name)
-              VALUES (:WS-TYPE-NAME)
-              END-EXEC
-              EXEC SQL COMMIT END-EXEC
-           
-           WHEN 0
-              DISPLAY "This book type is already in the database."
+       CALL 'readtype' USING
+           WS-TYPE-NAME
+           WS-TYPE-ID
+           LK-RETURN-VALUE
+       END-CALL
 
+       EVALUATE TRUE
+           WHEN LK-RETURN-OK
+               SET LK-RETURN-ALREADY-HERE TO TRUE
+               EXIT PROGRAM
+           WHEN LK-RETURN-ERROR
+               EXIT PROGRAM
        END-EVALUATE.
 
+       EXEC SQL
+           INSERT INTO types (name)
+           VALUES (:WS-TYPE-NAME)
+       END-EXEC
 
-       IF SQLCODE = 0
-          DISPLAY "Insertion successful."
-
-       ELSE
-          DISPLAY "Insertion error SQLCODE: " SQLCODE
-          EXEC SQL 
-           ROLLBACK 
-          END-EXEC 
-
-       END-IF.
-
+       EVALUATE SQLCODE
+           WHEN 0
+               SET LK-RETURN-OK TO TRUE
+               EXEC SQL COMMIT END-EXEC
+           WHEN OTHER
+               SET LK-RETURN-ERROR TO TRUE
+               EXEC SQL ROLLBACK END-EXEC
+       END-EVALUATE.
 
        MOVE WS-TYPE-NAME TO LK-TYPE-NAME.
 

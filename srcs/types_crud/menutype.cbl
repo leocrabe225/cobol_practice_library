@@ -17,6 +17,8 @@
 
        01 WS-CRUD   PIC X(10).
 
+       COPY retstatu REPLACING ==:PREFIX:== BY ==WS==.
+
        PROCEDURE DIVISION.
        
 
@@ -41,17 +43,40 @@
 
                    CALL "creatype" USING 
                         WS-TYPE-NAME
+                        WS-RETURN-VALUE
                    END-CALL
-      
+
+                   EVALUATE TRUE
+                       WHEN WS-RETURN-OK
+                           DISPLAY "Insertion successful."
+                       WHEN WS-RETURN-ALREADY-HERE
+                           DISPLAY 
+                            "This book type is already in the database."
+                       WHEN WS-RETURN-ERROR
+                           DISPLAY "Types Read/Create error."
+                   END-EVALUATE
+                  
                WHEN WS-READ-STRING
-                   DISPLAY "Enter the book type id: "
-                   ACCEPT WS-TYPE-ID
+                   DISPLAY "Enter the book type : "
+                   ACCEPT WS-TYPE-NAME
 
                    CALL "readtype" USING 
-                        WS-TYPE-ID
                         WS-TYPE-NAME
-                   END-CALL 
+                        WS-TYPE-ID
+                        WS-RETURN-VALUE
+                   END-CALL
 
+                   EVALUATE TRUE
+                       WHEN WS-RETURN-OK
+                           DISPLAY "Book type : " WS-TYPE-ID 
+                                   " | " WS-TYPE-NAME
+                           DISPLAY "Reading successful."
+                       WHEN WS-RETURN-NOT-FOUND
+                           DISPLAY "Record not found."
+                       WHEN WS-RETURN-ERROR
+                           DISPLAY "Types read error"
+
+                   END-EVALUATE
                WHEN WS-UPDATE-STRING
                    DISPLAY "Enter the book type id: "
                    ACCEPT WS-TYPE-ID
