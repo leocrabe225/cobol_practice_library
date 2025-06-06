@@ -37,6 +37,12 @@ libs: $(LIBS)
 $(OBJECT_FOLDER)%.so: $(OBJECT_FOLDER)%.cob
 	cobc -m -locesql $< -o $@
 
+export PGPASSWORD := mdp
+
+create_db:
+	@echo $(PGPASSWORD)
+	psql -U postgres -f createdb.sql -a 
+
 # Clean all generated files
 clean:
 	rm -rf $(OBJECT_FOLDER) $(BIN)

@@ -1,0 +1,2 @@
+CREATE USER cobol WITH PASSWORD 'mdp';
+CREATE DATABASE test_table OWNER cobol;
