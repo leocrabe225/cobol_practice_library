@@ -297,14 +297,37 @@
       *                WS-BOOK-NAME
       *            END-CALL 
       *            
-      *        WHEN WS-DELETE-STRING
-      *            DISPLAY "Enter book's id: "
-      *            ACCEPT WS-BOOK-ID
-      *
-      *            CALL "deltbook" USING 
-      *                WS-BOOK-ID
-      *            END-CALL
+               WHEN WS-DELETE-STRING
+                   DISPLAY "Enter book's name: "
+                   ACCEPT WS-BOOK-NAME
+       
+                   CALL "deltbook" USING 
+                       WS-BOOK-NAME
+                       WS-BOOK-ID,
+                       WS-BOOK-ISBN,
+                       WS-BOOK-YEAR,
+                       WS-AUTHOR-LASTNAME,
+                       WS-AUTHOR-FIRSTNAME,
+                       WS-EDITOR-NAME,
+                       WS-TYPE-NAME,
+                       WS-RETURN-VALUE
+                   END-CALL
                    
+                   EVALUATE TRUE
+                       WHEN WS-RETURN-OK
+                           PERFORM 0500-MOVE-BOOK-TO-OUT-LINE-BEGIN
+                              THRU 0500-MOVE-BOOK-TO-OUT-LINE-END
+                           DISPLAY WS-OUT-SEPARATION-LINE
+                           DISPLAY WS-OUT-HDR
+                           DISPLAY WS-OUT-SEPARATION-LINE
+                           DISPLAY WS-OUT-LINE
+                           DISPLAY WS-OUT-SEPARATION-LINE
+                           DISPLAY "Was successfully deleted."
+                       WHEN WS-RETURN-NOT-FOUND
+                           DISPLAY "Record not found."
+                       WHEN WS-RETURN-ERROR
+                           DISPLAY "Read/Delete error."
+                   END-EVALUATE
                
                WHEN WS-QUIT-STRING
                SET WS-QUIT-Y TO TRUE 
