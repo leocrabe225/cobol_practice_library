@@ -50,7 +50,7 @@
            SELECT 
                books.id,
                books.isbn,
-               books.year, 
+               books.year,
                authors.first_name,
                authors.last_name,
                editors.name,
@@ -64,9 +64,9 @@
                :WS-EDITOR-NAME,
                :WS-TYPE-NAME
            FROM books
-           INNER JOIN authors on books.author_id = authors.id
-           INNER JOIN editors on books.editor_id = editor.id
-           INNER JOIN types on books.types_id = types.id
+           INNER JOIN authors ON books.author_id = authors.id
+           INNER JOIN editors ON books.editor_id = editors.id
+           INNER JOIN types ON books.type_id = types.id
            WHERE 
                books.name = :WS-NAME
        END-EXEC.
@@ -77,7 +77,6 @@
                WHEN +100
                    SET LK-RETURN-NOT-FOUND TO TRUE
                WHEN OTHER
-                   DISPLAY "Error : " SQLCODE
                    SET LK-RETURN-ERROR TO TRUE
            END-EVALUATE.
       

@@ -68,15 +68,15 @@
                WHEN LK-RETURN-OK
                    SET LK-RETURN-ALREADY-HERE TO TRUE
                    EXIT PROGRAM
-               WHEN LK-RETURN-ERROR
-                   EXIT PROGRAM
+      *        WHEN LK-RETURN-ERROR
+      *            EXIT PROGRAM
            END-EVALUATE.
-
+           
        EXEC SQL
            INSERT INTO books (isbn, name, year, author_id, editor_id,
                type_id)
-           VALUES (:WS-ISBN, :WS-NAME, :WS-YEAR, WS-AUTHOR-ID,
-               WS-EDITOR-ID, WS-TYPE-ID)
+           VALUES (:WS-ISBN, :WS-NAME, :WS-YEAR, :WS-AUTHOR-ID,
+               :WS-EDITOR-ID, :WS-TYPE-ID)
        END-EXEC
       
            EVALUATE SQLCODE
