@@ -87,6 +87,9 @@
 
            PERFORM 0500-PUT-EDITOR-BEGIN
               THRU 0500-PUT-EDITOR-END.
+
+           PERFORM 0600-PUT-BOOK-BEGIN
+              THRU 0600-PUT-BOOK-END.
       
        0200-PUT-LINE-IN-DB-END.
 
@@ -201,6 +204,22 @@
                       THRU 1000-ERROR-LEAVE-END
            END-EVALUATE.
        0500-PUT-EDITOR-END.
+
+       0600-PUT-BOOK-BEGIN.
+           CALL "creabook" USING
+               WS-ISBN
+               WS-BOOK-NAME
+               WS-YEAR
+               WS-AUTHOR-ID
+               WS-EDITOR-ID
+               WS-TYPE-ID
+               WS-RETURN-VALUE
+           END-CALL.
+           IF WS-RETURN-ERROR THEN
+               PERFORM 1000-ERROR-LEAVE-BEGIN
+               THRU 1000-ERROR-LEAVE-END
+           END-IF.
+       0600-PUT-BOOK-END.
 
        1000-ERROR-LEAVE-BEGIN.
            DISPLAY "Error while reading file".
